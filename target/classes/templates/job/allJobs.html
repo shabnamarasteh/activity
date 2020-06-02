@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title> کارهای ایجاد شده</title>
+</head>
+<body>
+<div th:replace="fragment/header::head"></div>
+<div th:replace="fragment/header::nav"></div>
+
+
+<div  style="margin-top: 100px;min-height: 735px" id="jobs">
+    <div class="col-md-12">
+        <div style="text-align: right;padding: 0 15px;">
+            <p class="title-page"> کارهای ایجاد شده</p>
+        </div>
+    </div>
+    <div class="create-btn">
+        <a th:href="'/job/register'" class="btn btn-info">ایجاد کار جدید</a>
+    </div>
+    <div class="container">
+        <div class="row">
+            <table class="table table-hover" style="direction: rtl">
+                <thead>
+                <td>عنوان</td>
+                <td>میزان انجام</td>
+                <td>ویرایش</td>
+                <td>حذف</td>
+                </thead>
+                <tr th:each="job : ${jobs} ">
+                    <td><a th:href="'/job/edit/'+${job.getId()}"><p th:id="'title_'+${job.getId()}" th:text="${job.getTitle()}"></p></a></td>
+                    <td><p th:text="${job.getState()}"></p></td>
+                    <td><a  class="btn btn-info"  th:href="'/job/edit/'+${job.getId()}"><p  th:text="ویرایش"></p></a></td>
+                    <td><a class="btn btn-danger" data-toggle="modal" data-target="#delete" th:onclick="|deleteJob( '${job.getId()}')|"
+                         ><p th:text="حذف"></p></a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="delete" class="modal fade" role="dialog" style="margin-top: 100px">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">حذف کار ایجاد شده</h4>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <a id="delete_accept" type="button" class="btn btn-danger" >حذف</a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        function deleteJob(id) {
+            title = $("#title_"+id).text();
+            $(".modal-body > p").html("ایا برای حذف "+title+"اطمینان دارید؟");
+            $(".modal-footer #delete_accept").attr("href","/job/delete/"+id);
+        }
+    </script>
+</div>
+<div th:replace="fragment/footer::footer"></div>
+
+</body>
+</html>

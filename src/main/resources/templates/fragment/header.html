@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- css -->
+    <meta charset="UTF-8">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/color/default.css}" rel="stylesheet">
+
+
+    <!-- Resources -->
+    <script th:src="@{/sunburst/js/core.js}"></script>
+    <script th:src="@{/sunburst/js/charts.js}"></script>
+    <script th:src="@{/sunburst/js/sunburst.js}"></script>
+    <script th:src="@{/sunburst/js/animated.js}"></script>
+
+</head>
+<body>
+    <nav class="navbar navbar-default " role="navigation" id="navigation"  th:fragment="nav">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle nav</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <!-- Logo text or image -->
+<!--                <a class="navbar-brand" href="index.html">Alstar</a>-->
+
+            </div>
+            <div class="navigation collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li ><a href="/">صفحه اصلی</a></li>
+<!--                    class="current"-->
+
+                    <li><a href="/unity">لیست واحدها</a></li>
+                    <li><a href="/unity/register">ایجاد واحد جدید</a></li>
+                    <li><a href="/job">لیست کارها</a></li>
+                    <li><a href="/job/register">ایجاد کار جدید</a></li>
+                    <li><a href="/admin">لیست ادمین ها</a></li>
+                    <li><a href="/admin/register">ایجاد ادمین جدید</a></li>
+                    <li class="logout"><a href="/logout">خروج</a></li>
+                </ul>
+            </div>
+    </div>
+</nav>
+
+</body>
+</html>

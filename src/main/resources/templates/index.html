@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <div th:replace="fragment/header::head"></div>
+
+    <title>Title</title>
+</head>
+<body>
+<div th:replace="fragment/header::nav"></div>
+<!-- Styles -->
+<style>
+    #chartdiv {
+        height: 450px;
+    }
+</style>
+<!-- Chart code -->
+<script>
+    am4core.ready(function() {
+
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        // create chart
+        var chart = am4core.create("chartdiv", am4plugins_sunburst.Sunburst);
+        chart.padding(0,0,0,0);
+        chart.radius = am4core.percent(98);
+
+        var unity = JSON.parse('[[${unity}]]'.replace(/&quot;/g,'"'));
+        let dataset = [];
+        for (var i = 0; i < unity.length; i++) {
+            let children = [];
+            for (var  j = 0; j < unity[i]["jobList"].length; j++) {
+                children.push({ "name":  unity[i]["jobList"][j]["title"], "value":  unity[i]["jobList"][j].state ,"color" : "#840563"});
+            }
+            dataset.push( { "name" : unity[i].title ,"children":children });
+        }
+
+        chart.data = dataset ;
+        chart.colors.step = 2;
+        chart.fontSize = 11;
+        chart.innerRadius = am4core.percent(10);
+
+        // define data fields
+        chart.dataFields.value = "value";
+        chart.dataFields.name = "name";
+        chart.dataFields.children = "children";
+
+        var level0SeriesTemplate = new am4plugins_sunburst.SunburstSeries();
+        level0SeriesTemplate.hiddenInLegend = false;
+        chart.seriesTemplates.setKey("0", level0SeriesTemplate)
+
+        // this makes labels to be hidden if they don't fit
+        level0SeriesTemplate.labels.template.truncate = true;
+        level0SeriesTemplate.labels.template.hideOversized = true;
+
+        level0SeriesTemplate.labels.template.adapter.add("rotation", function(rotation, target) {
+            target.maxWidth = target.dataItem.slice.radius - target.dataItem.slice.innerRadius - 10;
+            target.maxHeight = Math.abs(target.dataItem.slice.arc * (target.dataItem.slice.innerRadius + target.dataItem.slice.radius) / 2 * am4core.math.RADIANS);
+
+            return rotation;
+        })
+
+
+        var level1SeriesTemplate = level0SeriesTemplate.clone();
+        chart.seriesTemplates.setKey("1", level1SeriesTemplate)
+        level1SeriesTemplate.fillOpacity = 0.75;
+        level1SeriesTemplate.hiddenInLegend = true;
+
+        var level2SeriesTemplate = level0SeriesTemplate.clone();
+        chart.seriesTemplates.setKey("2", level2SeriesTemplate)
+        level2SeriesTemplate.fillOpacity = 0.5;
+        level2SeriesTemplate.hiddenInLegend = true;
+
+        chart.legend = new am4charts.Legend();
+
+    }); // end am4core.ready()
+
+
+
+
+    am4core.ready(function() {
+
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        // create chart
+        var chart = am4core.create("chartdiv1", am4plugins_sunburst.Sunburst);
+        chart.padding(0,0,0,0);
+        chart.radius = am4core.percent(98);
+        var lastlevel =0;
+        var firstlevel = 0;
+        var secondlevel = 0;
+
+        var jobCount = JSON.parse('[[${jobCount}]]'.replace(/&quot;/g,'"'));
+        var unity = JSON.parse('[[${unity}]]'.replace(/&quot;/g,'"'));
+        let dataset = [];
+        let children_firstlevel = [];
+        let children_secondlevel = [];
+        let children_lastlevel = [];
+
+
+        for (var i = 0; i < jobCount.length; i++) {
+
+            firstlevel += jobCount[i]['firstlevel'];
+            secondlevel += jobCount[i]['secondlevel'];
+            lastlevel += jobCount[i]['lastlevel'];
+            for (var  j = 0; j < unity.length; j++) {
+
+                if(unity[j]['id'] == jobCount[i]["unity_id"]){
+                    let childrens_firstlevel = [];
+                    let childrens_secondlevel = [];
+                    let childrens_lastlevel = [];
+                    for (var  z = 0; z < unity[j]["jobList"].length; z++) {
+                        if(unity[j]["jobList"][z]["state"] <= 30){
+
+                            childrens_firstlevel.push({ "name":  unity[j]["jobList"][z]["title"], "value":  unity[j]["jobList"][z].state ,"color" : "#840563"});
+
+                        }else if(unity[j]["jobList"][z]["state"] >31 && unity[j]["jobList"][z]["state"] <= 70){
+
+                            childrens_secondlevel.push({ "name":  unity[j]["jobList"][z]["title"], "value":  unity[j]["jobList"][z].state ,"color" : "#840563"});
+
+                        }else if(unity[j]["jobList"][z]["state"] <=100 && unity[j]["jobList"][z]["state"] >71){
+                            childrens_lastlevel.push({ "name":  unity[j]["jobList"][z]["title"], "value":  unity[j]["jobList"][z].state ,"color" : "#840563"});
+                        }
+                    }
+                    if(jobCount[i]["firstlevel"] > 0){
+                        children_firstlevel.push( { "name" : jobCount[i]["title"] ,"value": 20,"children": childrens_firstlevel })
+                    }
+                    if(jobCount[i]["secondlevel"] > 0){
+                        children_secondlevel.push( { "name" :  jobCount[i]["title"] ,"value": 20,"children": childrens_secondlevel })
+                    }
+                    if(jobCount[i]["lastlevel"] > 0){
+                        children_lastlevel.push( { "name" :  jobCount[i]["title"] ,"value": 20,"children": childrens_lastlevel })
+                    }
+                }
+            }
+
+        }
+        dataset.push( { "name" : "0-30" , "value": firstlevel  ,"children": children_firstlevel });
+        dataset.push( { "name" : "30-70" , "value" : secondlevel ,"children":children_secondlevel });
+        dataset.push( { "name" : "70-100" , "value" : lastlevel, "children":children_lastlevel});
+
+        chart.data = dataset ;
+        chart.colors.step = 2;
+        chart.fontSize = 18;
+        chart.innerRadius = am4core.percent(10);
+
+        // define data fields
+        chart.dataFields.value = "value";
+        chart.dataFields.name = "name";
+        chart.dataFields.children = "children";
+
+        var level0SeriesTemplate = new am4plugins_sunburst.SunburstSeries();
+        level0SeriesTemplate.hiddenInLegend = false;
+        chart.seriesTemplates.setKey("0", level0SeriesTemplate)
+
+        // this makes labels to be hidden if they don't fit
+        level0SeriesTemplate.labels.template.truncate = true;
+        level0SeriesTemplate.labels.template.hideOversized = true;
+
+        level0SeriesTemplate.labels.template.adapter.add("rotation", function(rotation, target) {
+            target.maxWidth = target.dataItem.slice.radius - target.dataItem.slice.innerRadius - 10;
+            target.maxHeight = Math.abs(target.dataItem.slice.arc * (target.dataItem.slice.innerRadius + target.dataItem.slice.radius) / 2 * am4core.math.RADIANS);
+
+            return rotation;
+        })
+
+
+        var level1SeriesTemplate = level0SeriesTemplate.clone();
+        chart.seriesTemplates.setKey("1", level1SeriesTemplate)
+        level1SeriesTemplate.fillOpacity = 0.75;
+        level1SeriesTemplate.hiddenInLegend = true;
+
+        var level2SeriesTemplate = level0SeriesTemplate.clone();
+        chart.seriesTemplates.setKey("2", level2SeriesTemplate)
+        level2SeriesTemplate.fillOpacity = 0.5;
+        level2SeriesTemplate.hiddenInLegend = true;
+
+        chart.legend = new am4charts.Legend();
+
+    }); // end am4core.ready()
+</script>
+
+
+<div style="margin-top:100px;min-height: 735px;padding-top:120px">
+
+    <!-- HTML -->
+    <div id="chartdiv"></div>
+    <div id="chartdiv1" style="height: 930px"></div>
+</div>
+
+
+<div th:replace="fragment/footer::footer"></div>
+
+</body>
+</html>
