@@ -49,4 +49,18 @@ public class JwtUserDetailsService  implements UserDetailsService {
 
         return AdminPrincipal.create(admin);
     }
+
+    public boolean existsByUsername(String username) {
+        Admin admin = adminRepository.findByUsername(username);
+        if (admin == null) {
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public Admin save(Admin admin) {
+        return adminRepository.save(admin);
+
+    }
 }

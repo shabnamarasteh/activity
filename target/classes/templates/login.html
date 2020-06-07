@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fa" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>ورود</title>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
 </head>
 <body>
 <div th:replace="fragment/header::head"></div>
@@ -10,7 +12,7 @@
 <div style="margin-top:100px;min-height: 735px">
     <div class="col-md-3"></div>
     <div  class="col-md-6">
-        <form role="form" id="loginForm" class="login-form" action="/xxx" method="post" th:object="${AdminPrincipal}">
+        <form role="form" id="loginForm" class="login-form" action="/auth_user" method="post" th:object="${AdminPrincipal}">
             <div style="text-align: right">
                 <p class="title-page">ورود</p>
             </div>
@@ -20,8 +22,15 @@
             </div>
             <div class="form-group">
                 <label for="password">پسورد</label>
-                <input class="form-control" type="password" id="password" name="password"   th:field="*{password}" />
+                <input class="form-control" type="password" id="password" name="password" th:field="*{password}" />
             </div>
+
+            <input type="hidden" name="secret" th:value="${@captchaSettings.getSecret()}">
+            <div class="g-recaptcha"
+                 th:attr="data-sitekey=${@captchaSettings.getSite()}" style="text-align: center;margin: 10px auto;display: inline-block;"></div>
+            <span id="captchaError" class="alert alert-danger col-sm-4"
+                  style="display:none"></span>
+
 
             <div class="form-group">
                 <button type="submit" name="submit"  class="btn btn-success" id="submit" >ثبت</button>

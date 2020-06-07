@@ -1,32 +1,44 @@
 package com.eshragh.activity.modules;
 
 import com.eshragh.activity.config.ParameterStringBuilder;
+import com.eshragh.activity.modules.admins.entity.Admin;
+import com.eshragh.activity.modules.captcha.exp.ReCaptchaInvalidException;
+import com.eshragh.activity.modules.captcha.service.CaptchaService;
 import com.eshragh.activity.modules.jobs.service.JobService;
 import com.eshragh.activity.modules.jwt.controller.JwtAuthenticationController;
 import com.eshragh.activity.modules.jwt.entity.AdminPrincipal;
 import com.eshragh.activity.modules.jwt.model.JwtRequest;
 import com.eshragh.activity.modules.unity.service.UnityService;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.deploy.net.HttpResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.web.servlet.server.Session;
+import org.springframework.http.*;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import sun.net.www.http.HttpClient;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -39,9 +51,15 @@ import java.util.*;
 public class MainController {
     private JobService jobService;
     private UnityService unityService;
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private JwtAuthenticationController jwtAuthenticationController;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    CaptchaService captchaService;
 
     @Autowired
     public MainController(JobService jobService, UnityService unityService) {
@@ -66,51 +84,59 @@ public class MainController {
     }
 
     @RequestMapping(value = {"/login" , "/login/"} , method = RequestMethod.GET)
-    public String loginForm(Model model){
+    public String loginForm(Model model,HttpServletRequest request){
         model.addAttribute("AdminPrincipal" , new AdminPrincipal());
-
-        return "login";
-    }
-    private ServerSocket socket            = null;
-    private DataInputStream  input   = null;
-    private DataOutputStream out     = null;
-    @RequestMapping(value = {"/xxx" , "/xxx/"} , method = RequestMethod.POST)
-//    @SendTo("/signin")
-    public String login(@ModelAttribute AdminPrincipal adminPrincipal, Model model) {
-        model.addAttribute("AdminPrincipal" , adminPrincipal);
-        Socket socket = null;
-
-
-            String payload="{\"jsonrpc\":\"2.0\",\"method\":\"post\",\"params\":[{\"username\":"+adminPrincipal.getUsername()+"}],\"password\":"+adminPrincipal.getPassword()+"}";
-
-
-
-
-
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if(cookie.getName().equals("Authorization") && cookie.getValue().startsWith("Bearer") ) {
+                    return "redirect:/";
+                }
+            }
+        }
         return "login";
     }
 
-//    @RequestMapping(value = {"/login1" , "/login1/"} )
-//    public String login(@ModelAttribute AdminDTO adminDTO) throws Exception {
-//        System.out.println("--------72222-----------");c
-//        JwtRequest jwtRequest = new JwtRequest();
-//        jwtRequest.setUsername(adminDTO.getUsername());
-//        jwtRequest.setPassword(adminDTO.getPassword());
-//        HttpEntity<?> s = jwtAuthenticationController.createAuthenticationToken(jwtRequest);
-//        System.out.println(s.getHeaders()+"-----------------");
-//        return "www";
-//    }
-//
-//    @RequestMapping(value = {"/login1" , "/login1/"} , method = RequestMethod.POST)
-//    public String login(@ModelAttribute Admin admin){
-//        System.out.println("----------1------------"+admin.getEmail());
-//        String token = getJWTToken(admin.getEmail());
-//        AdminDTO admindto = new AdminDTO();
-//        admindto.setUsername(admin.getEmail());
-//        admindto.setToken(token);
-//        System.out.println("----------2------------"+token);
-//        return  "redirect:/admin/";
-//    }
+    @RequestMapping(value = {"/auth_user" , "/auth_user/"} , method = RequestMethod.POST)
+    public String login(@ModelAttribute AdminPrincipal adminPrincipal, Model model, HttpServletResponse servletResponse, HttpServletRequest servletrequest) {
+        String response = servletrequest.getParameter("g-recaptcha-response");
+        try {
+            captchaService.processResponse(response);
+            servletrequest.setAttribute("g-recaptcha-response" , "");
+            model.addAttribute("AdminPrincipal" , adminPrincipal);
+            restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            JSONObject jsonobj = new JSONObject();
+            jsonobj.put("username", adminPrincipal.getUsername());
+            jsonobj.put("password", adminPrincipal.getPassword());
+
+            HttpEntity<String> request =
+                    new HttpEntity<>(jsonobj.toString(), headers);
+
+            String responces;
+            responces = restTemplate.postForObject("http://localhost:8080/signin", request, String.class);
+
+            JSONObject obj = new JSONObject(responces);
+            String accessToken = obj.getString("accessToken");
+            String tokenType = obj.getString("tokenType");
+
+
+            Cookie cookie = new Cookie("Authorization",tokenType+accessToken);
+            cookie.setHttpOnly(true);
+            servletResponse.addCookie(cookie);
+
+        } catch (ReCaptchaInvalidException e){
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return "redirect:/login?error=3";
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return "redirect:/login?error=4";
+        }
+
+        return "redirect:/";
+    }
 
     private String getJWTToken(String username) {
         String secretKey = "mySecretKey";
@@ -134,4 +160,32 @@ public class MainController {
 //    public String login(){
 //        return "login";
 //    }
+
+    @RequestMapping(value = {"/signup" , "/signup/"} , method = RequestMethod.GET)
+    public String signupForm(Model model,HttpServletRequest request){
+        model.addAttribute("Admin" , new Admin());
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if(cookie.getName().equals("Authorization") && cookie.getValue().startsWith("Bearer") ) {
+                    return "redirect:/";
+                }
+            }
+        }
+        return "signup";
+    }
+
+    @RequestMapping(value = "/login/{error}", method = RequestMethod.GET)
+    public  String  loginError(Model model, @PathVariable("error") String error, HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if(cookie.getName().equals("Authorization") && cookie.getValue().startsWith("Bearer") ) {
+                    return "redirect:/";
+                }
+            }
+        }
+        model.addAttribute("error" , error);
+        return "login";
+    }
 }

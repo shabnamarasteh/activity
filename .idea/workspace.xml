@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="dd44ba1f-4f2a-4a43-8146-b2bd8a6bad39" name="Default Changelist" comment="" />
+    <list default="true" id="dd44ba1f-4f2a-4a43-8146-b2bd8a6bad39" name="Default Changelist" comment="add google Captcha for signup and login">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_json_json_20190722.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activity.iml" beforeDir="false" afterPath="$PROJECT_DIR$/activity.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/config/SpringSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/config/SpringSecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/modules/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/modules/MainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/modules/jwt/config/JwtRequestFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/modules/jwt/config/JwtRequestFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/modules/jwt/config/JwtTokenUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/modules/jwt/config/JwtTokenUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/modules/jwt/controller/JwtAuthenticationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/modules/jwt/controller/JwtAuthenticationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/modules/jwt/service/JwtUserDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eshragh/activity/modules/jwt/service/JwtUserDetailsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/eshragh/activity/config/SpringSecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/eshragh/activity/config/SpringSecurityConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/eshragh/activity/modules/MainController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/eshragh/activity/modules/MainController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/eshragh/activity/modules/jwt/config/JwtRequestFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/eshragh/activity/modules/jwt/config/JwtRequestFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/eshragh/activity/modules/jwt/config/JwtTokenUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/eshragh/activity/modules/jwt/config/JwtTokenUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/eshragh/activity/modules/jwt/controller/JwtAuthenticationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/eshragh/activity/modules/jwt/controller/JwtAuthenticationController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/eshragh/activity/modules/jwt/service/JwtUserDetailsService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/eshragh/activity/modules/jwt/service/JwtUserDetailsService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/login.html" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,24 +62,29 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/resources/templates" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\arasteh\IdeaProjects\activity\src\main\resources\templates\unity" />
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.eshragh.activity.config" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.eshragh.activity" />
     </key>
-    <key name="CreateClassDialog.RecentsKey">
-      <recent name="com.eshragh.activity.config" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\arasteh\IdeaProjects\activity\src\main\resources\templates" />
+      <recent name="C:\Users\arasteh\IdeaProjects\activity\src\main\java\com\eshragh\activity\modules" />
       <recent name="C:\Users\arasteh\IdeaProjects\activity\src\main\java\com\eshragh\activity\modules\jwt\model" />
       <recent name="C:\Users\arasteh\IdeaProjects\activity\src\main\java\com\eshragh\activity\config" />
       <recent name="C:\Users\arasteh\IdeaProjects\activity\src\main\resources" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.eshragh.activity.config" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\arasteh\IdeaProjects\activity\src\main\resources\templates\unity" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -97,16 +123,33 @@
       <workItem from="1590895834243" duration="25780000" />
       <workItem from="1590982597367" duration="15114000" />
       <workItem from="1591005004097" duration="8037000" />
-      <workItem from="1591073118198" duration="23453000" />
+      <workItem from="1591073118198" duration="24175000" />
+      <workItem from="1591414743901" duration="13728000" />
+      <workItem from="1591501431190" duration="18416000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
+    <MESSAGE value="add google Captcha for signup and login" />
+    <option name="LAST_COMMIT_MESSAGE" value="add google Captcha for signup and login" />
   </component>
 </project>

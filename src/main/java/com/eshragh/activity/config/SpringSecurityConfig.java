@@ -72,23 +72,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
-
-
-
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-//// We don't need CSRF for this example
-//        httpSecurity.csrf().disable()
-//// dont authenticate this particular request
-//                .authorizeRequests().antMatchers("/authenticate", "/login", "/js/**","/css/**").permitAll().
-//// all other requests need to be authenticated
-//        anyRequest().authenticated().and().
-//// make sure we use stateless session; session won't be used to
-//// store user's state.
-//        exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().formLogin().loginPage("/login");
-
-
         httpSecurity
                 .cors()
                 .and()
@@ -101,22 +86,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/",
+                .antMatchers(
                         "/favicon.ico",
                         "/**/*.png",
                         "/**/*.gif",
                         "/**/*.svg",
                         "/**/*.jpg",
-                        "/**/*.html",
                         "/**/*.css",
-                        "/**/*.js")
-                .permitAll()
-                .antMatchers("/api/auth/**","/signin","/xxx", "/login")
-                .permitAll()
-                .antMatchers(HttpMethod.GET, "/**")
+                        "/**/*.js","/signup","/api/auth/**","/signin","/signup_user","/auth_user", "/login")
                 .permitAll()
                 .anyRequest()
-                .authenticated();
+                .authenticated().and().formLogin().loginPage("/login")
+                .and().logout().logoutUrl("/logout").deleteCookies("Authorization").logoutSuccessUrl("/login").and().exceptionHandling().accessDeniedPage("/403");
 
 // Add a filter to validate the tokens with every request
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
