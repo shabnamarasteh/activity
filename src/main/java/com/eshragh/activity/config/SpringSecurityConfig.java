@@ -93,7 +93,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.svg",
                         "/**/*.jpg",
                         "/**/*.css",
-                        "/**/*.js","/signup","/api/auth/**","/signin","/signup_user","/auth_user", "/login")
+                        "/**/*.js","/signup","/api/auth/**","/signin","/signup_user","/auth_user", "/login","/captcha")
                 .permitAll()
                 .anyRequest()
                 .authenticated().and().formLogin().loginPage("/login")

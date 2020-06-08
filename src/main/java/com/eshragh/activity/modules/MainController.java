@@ -1,26 +1,19 @@
 package com.eshragh.activity.modules;
 
-import com.eshragh.activity.config.ParameterStringBuilder;
 import com.eshragh.activity.modules.admins.entity.Admin;
-import com.eshragh.activity.modules.captcha.exp.ReCaptchaInvalidException;
-import com.eshragh.activity.modules.captcha.service.CaptchaService;
+import com.eshragh.activity.modules.googleCaptcha.exp.ReCaptchaInvalidException;
+import com.eshragh.activity.modules.googleCaptcha.service.CaptchaService;
 import com.eshragh.activity.modules.jobs.service.JobService;
 import com.eshragh.activity.modules.jwt.controller.JwtAuthenticationController;
 import com.eshragh.activity.modules.jwt.entity.AdminPrincipal;
-import com.eshragh.activity.modules.jwt.model.JwtRequest;
 import com.eshragh.activity.modules.unity.service.UnityService;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.deploy.net.HttpResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.http.*;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,18 +22,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-import sun.net.www.http.HttpClient;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.*;
-import java.io.*;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 // create view sunburst as select j.id as j_id, j.title as j_title , u.id as u_id , u.title as u_title , j.state from job j inner join unity u on u.id = j.unity_id;
@@ -94,37 +80,48 @@ public class MainController {
                 }
             }
         }
+
         return "login";
     }
 
     @RequestMapping(value = {"/auth_user" , "/auth_user/"} , method = RequestMethod.POST)
-    public String login(@ModelAttribute AdminPrincipal adminPrincipal, Model model, HttpServletResponse servletResponse, HttpServletRequest servletrequest) {
+    public String login(@ModelAttribute AdminPrincipal adminPrincipal, Model model, HttpServletResponse servletResponse, HttpServletRequest servletrequest, HttpSession session) {
         String response = servletrequest.getParameter("g-recaptcha-response");
         try {
-            captchaService.processResponse(response);
-            servletrequest.setAttribute("g-recaptcha-response" , "");
-            model.addAttribute("AdminPrincipal" , adminPrincipal);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            JSONObject jsonobj = new JSONObject();
-            jsonobj.put("username", adminPrincipal.getUsername());
-            jsonobj.put("password", adminPrincipal.getPassword());
+//            captchaService.processResponse(response);
+//            servletrequest.setAttribute("g-recaptcha-response" , "");
+            String captcha = session.getAttribute("captcha_security").toString();
+            String verifyCaptcha = servletrequest.getParameter("captcha");
+            if (captcha.equals(verifyCaptcha)) {
+                model.addAttribute("AdminPrincipal" , adminPrincipal);
+                restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                JSONObject jsonobj = new JSONObject();
+                jsonobj.put("username", adminPrincipal.getUsername());
+                jsonobj.put("password", adminPrincipal.getPassword());
 
-            HttpEntity<String> request =
-                    new HttpEntity<>(jsonobj.toString(), headers);
+                HttpEntity<String> request =
+                        new HttpEntity<>(jsonobj.toString(), headers);
 
-            String responces;
-            responces = restTemplate.postForObject("http://localhost:8080/signin", request, String.class);
+                String responces;
+                responces = restTemplate.postForObject("http://localhost:8080/signin", request, String.class);
 
-            JSONObject obj = new JSONObject(responces);
-            String accessToken = obj.getString("accessToken");
-            String tokenType = obj.getString("tokenType");
+                JSONObject obj = new JSONObject(responces);
+                String accessToken = obj.getString("accessToken");
+                String tokenType = obj.getString("tokenType");
 
 
-            Cookie cookie = new Cookie("Authorization",tokenType+accessToken);
-            cookie.setHttpOnly(true);
-            servletResponse.addCookie(cookie);
+                Cookie cookie = new Cookie("Authorization",tokenType+accessToken);
+                cookie.setHttpOnly(true);
+                servletResponse.addCookie(cookie);
+
+
+
+            } else {
+
+                return "redirect:/login?error=5";
+            }
 
         } catch (ReCaptchaInvalidException e){
             e.printStackTrace();

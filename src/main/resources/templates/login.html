@@ -25,12 +25,14 @@
                 <input class="form-control" type="password" id="password" name="password" th:field="*{password}" />
             </div>
 
-            <input type="hidden" name="secret" th:value="${@captchaSettings.getSecret()}">
-            <div class="g-recaptcha"
-                 th:attr="data-sitekey=${@captchaSettings.getSite()}" style="text-align: center;margin: 10px auto;display: inline-block;"></div>
-            <span id="captchaError" class="alert alert-danger col-sm-4"
-                  style="display:none"></span>
+<!--            <input type="hidden" name="secret" th:value="${@captchaSettings.getSecret()}">-->
+<!--            <div class="g-recaptcha"-->
+<!--                 th:attr="data-sitekey=${@captchaSettings.getSite()}" style="text-align: center;margin: 10px auto;display: inline-block;"></div>-->
+<!--            <span id="captchaError" class="alert alert-danger col-sm-4"-->
+<!--                  style="display:none"></span>-->
 
+            <img th:src="@{/captcha}">
+            <input type="text" name="captcha" required="required" style="margin-top: 5px;">
 
             <div class="form-group">
                 <button type="submit" name="submit"  class="btn btn-success" id="submit" >ثبت</button>

@@ -20,6 +20,7 @@ public class AdminPrincipal implements UserDetails {
     private String lastname;
 
     private String username;
+    private String captcha;
 
     @JsonIgnore
     private String password;
@@ -117,5 +118,13 @@ public class AdminPrincipal implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getCaptcha() {
+        return captcha;
+    }
+
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
     }
 }
